@@ -5,63 +5,77 @@ import '../models/transaction.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
+  final Function deleteTx;
 
-  TransactionList(this.transactions);
+  TransactionList(this.transactions, this.deleteTx);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 300,
-      child: ListView.builder(
-        itemBuilder: (ctx, index) {
-          return Card(
-            child: Row(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 15,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.purple,
-                      width: 2,
-                    ),
-                  ),
-                  padding: EdgeInsets.all(10),
+    return ListView.builder(
+      itemBuilder: (ctx, index) {
+        return Card(
+          color: Theme.of(context).splashColor,
+          shadowColor: Theme.of(context).primaryColorDark,
+          margin: EdgeInsets.symmetric(
+            vertical: 8,
+            horizontal: 5,
+          ),
+          elevation: 5,
+          child: ListTile(
+            leading: CircleAvatar(
+              radius: 30,
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: FittedBox(
                   child: Text(
-                    '\$${transactions[index].amount.toStringAsFixed(2)}',
+                    'Rs ${(transactions[index].amount * transactions[index].quantity).toStringAsFixed(2)}',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.purple,
+                      color: Theme.of(context).primaryColorLight,
                     ),
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      transactions[index].title,
+              ),
+            ),
+            title: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    transactions[index].title,
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  flex: 1,
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                CircleAvatar(
+                  child: Padding(
+                    padding: const EdgeInsets.all(1.0),
+                    child: Text(
+                      transactions[index].quantity.toString(),
                       style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).primaryColorLight,
                       ),
                     ),
-                    Text(
-                      DateFormat.yMMMd().format(transactions[index].date),
-                      style: TextStyle(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
+                  ),
+                  minRadius: 15,
+                  backgroundColor: Colors.lightBlueAccent,
                 ),
               ],
             ),
-          );
-        },
-        itemCount: transactions.length,
-      ),
+            subtitle: Text(
+              DateFormat.yMMMEd().format(transactions[index].date),
+            ),
+            trailing: IconButton(
+              icon: Icon(Icons.delete),
+              color: Colors.deepOrangeAccent[200],
+              onPressed: () => deleteTx(transactions[index]),
+            ),
+          ),
+        );
+      },
+      itemCount: transactions.length,
     );
   }
 }
